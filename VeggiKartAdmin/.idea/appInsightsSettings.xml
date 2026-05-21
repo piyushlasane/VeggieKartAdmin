@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.project.veggiekartadmin" />
+                  <option name="mobileSdkAppId" value="1:715578748864:android:9152b071dab0e42759a225" />
+                  <option name="projectId" value="veggies-kart" />
+                  <option name="projectNumber" value="715578748864" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
