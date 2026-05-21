@@ -1,4 +1,4 @@
-# 🥬 VeggieKart - Fresh Grocery Delivery App
+# 🥬 VeggieKart Admin - Grocery Store Management App
 
 <div align="center">
   
@@ -11,170 +11,126 @@
 
 ---
 
-## 📱 Screenshots
-
-### Authentication Flow
-<p float="left">
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232916/Auth_-_VeggieKart_jnbkdn.jpg" width="250" alt="Auth Screen"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232916/Login_-_VeggieKart_an7tyt.jpg" width="250" alt="Login Screen"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232913/Profile_-_VeggieKart_wuiua9.jpg" width="250" alt="Complete Profile"/>
-</p>
-
-### Main Application
-<p float="left">
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232916/Homepage_-_VeggieKart_wmonjw.jpg" width="250" alt="Home Screen"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232917/Category_-_VeggieKart_meuial.jpg" width="250" alt="Categories"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232914/Product_-_VeggieKart_srqlkn.jpg" width="250" alt="Product Details"/>
-</p>
-
-### Address Management
-<p float="left">
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232914/Address_-_VeggieKart_qzbhco.jpg" width="250" alt="Manage Addresses"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232914/AddAdd_-_VeggieKart_atuyni.jpg" width="250" alt="Add Address"/>
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://res.cloudinary.com/dosrhyslq/image/upload/v1766232914/Selection_-_VeggieKart_lprryp.jpg" width="250" alt="Address Selection"/>
-</p>
-
----
-
 ## 📖 About
 
-**VeggieKart** is a modern Android application built with cutting-edge Android technologies, the app provides users with a seamless shopping experience featuring real-time product catalogs, secure authentication, and intelligent address management.
-
-The app demonstrates production-ready architecture with Firebase integration, location services, and a beautiful Material Design 3 UI built entirely with Jetpack Compose.
+**VeggieKart Admin** is the companion admin application for the VeggieKart grocery delivery platform. Built with Jetpack Compose and Firebase, it provides store managers with a clean, intuitive interface to manage products, categories, and promotional banners — all synced in real-time to the customer-facing VeggieKart app.
 
 ---
 
 ## ✨ Features
 
-### 🔐 Authentication & User Management
-- **OTP-based Authentication**: Secure Firebase phone authentication with automatic OTP verification
-- **Profile Management**: Create and update user profiles with real-time sync
-- **Guest Mode**: Browse products without signing in
+### 🔐 Authentication
+- **Email/Password Login**: Secure Firebase email-based admin authentication
+- **Session Persistence**: Stay logged in across app restarts
 
-### 🏠 Smart Address Management
-- **Multiple Addresses**: Add, edit, and manage multiple delivery addresses
-- **Auto-Location Detection**: Automatically detect and fill address using GPS
-- **Default Address**: Set preferred delivery address with one tap
-- **Address Types**: Categorize addresses as Home, Work, or Other
+### 📦 Product Management
+- **View All Products**: Scrollable list with image, title, price, and category
+- **Add Product**: Full form with title, description, MRP, sell price, category dropdown, and multiple image URLs with live preview
+- **Edit Product**: Pre-filled form for quick updates
+- **Delete Product**: Confirmation dialog before deletion
 
-### 🛒 Product Catalog
-- **Category Browsing**: Explore products organized by categories
-- **Product Details**: View detailed product information with image galleries
-- **Real-time Updates**: Product data synced in real-time from Firebase
-- **Dynamic Banners**: Promotional banners with auto-scrolling
+### 🗂️ Category Management
+- **View All Categories**: List with image preview and name
+- **Add Category**: Name and image URL with live preview
+- **Edit Category**: Update existing category details
+- **Delete Category**: Safe deletion with confirmation
+
+### 🖼️ Banner Management
+- **View Current Banners**: Live image preview for each banner URL
+- **Add/Remove Banners**: Dynamic list with add and delete controls
+- **Save Banners**: One-tap save to update banners across the user app instantly
 
 ### 🎨 Modern UI/UX
-- **Material Design 3**: Latest Material You design principles
-- **Jetpack Compose**: Fully declarative UI with smooth animations
-- **Bottom Navigation**: Intuitive navigation between Home, Categories, and Cart
-- **Responsive Design**: Optimized for different screen sizes
-
-### 🌐 Backend Integration
-- **Firebase Firestore**: NoSQL database for real-time data sync
-- **Firebase Auth**: Secure phone-based authentication
-- **Cloud Storage**: Efficient image loading with Coil
-- **Security Rules**: Data protection with Firestore security rules
+- **Material Design 3**: Clean and modern admin interface
+- **Jetpack Compose**: Fully declarative UI
+- **Bottom Navigation**: Quick switching between Products, Categories, and Banners
+- **Loading States**: Progress indicators for all async operations
+- **Snackbar Feedback**: Clear success/error messages for every action
 
 ---
 
 ## 🚀 Technologies Used
 
 ### 💻 Android Development
-- **Kotlin** — Modern, concise, and safe programming language
-- **Jetpack Compose** — Declarative UI toolkit for native Android
+- **Kotlin** — Primary programming language
+- **Jetpack Compose** — Declarative UI toolkit
 - **MVVM Architecture** — Clean separation of concerns
-- **Coroutines** — Asynchronous programming for smooth UI
-- **Navigation Component** — Type-safe navigation between screens
-- **Android Studio** — Official IDE for Android development
+- **Coroutines + Flow** — Asynchronous state management
+- **Navigation Component** — Screen navigation
+- **ViewModel** — Lifecycle-aware state holders
 
 ### 🔥 Firebase Services
-- **Firebase Authentication** — Phone OTP-based secure login
-- **Cloud Firestore** — Real-time NoSQL database
-- **Firebase Storage** — Cloud storage for product images
+- **Firebase Authentication** — Email/password admin login
+- **Cloud Firestore** — Real-time NoSQL database (shared with user app)
 
-### 📚 Libraries & Dependencies
-- **Coil** — Modern image loading library for Android
+### 📚 Libraries
+- **Coil** — Image loading and caching
+- **Material Icons Extended** — Rich icon set
 - **Material 3** — Latest Material Design components
-- **Google Play Services** — Location services integration
-- **ViewPager Dots Indicator** — Elegant page indicators
 
 ---
 
-## 🎨 User Interface Overview
+## 🎨 Screens Overview
 
 | Screen | Description |
 |--------|-------------|
-| 🔐 **Auth Screen** | Welcome screen with login/guest options |
-| 📱 **Login Screen** | Phone number input with OTP verification |
-| ✏️ **Complete Profile** | First-time user profile setup |
-| 🏠 **Home Screen** | Product banners, categories, and featured items |
-| 📦 **Categories** | Browse products by category |
-| 🛍️ **Product Details** | Detailed product view with image gallery |
-| 👤 **Profile Screen** | User profile with settings and logout |
-| ✏️ **Edit Profile** | Update user information |
-| 📍 **Address Management** | Add, edit, delete, and set default addresses |
-| 🗺️ **Add Address** | Location-based address input with auto-detection |
+| 🔐 **Login Screen** | Admin email/password authentication |
+| 🏠 **Dashboard** | Bottom nav hub with Products, Categories, Banners |
+| 📦 **Products Screen** | List all products with edit/delete actions |
+| ➕ **Add/Edit Product** | Full product form with image preview |
+| 🗂️ **Categories Screen** | List all categories with edit/delete actions |
+| ➕ **Add/Edit Category** | Category form with image preview |
+| 🖼️ **Banners Screen** | Manage home screen banner URLs |
 
 ---
 
 ## 🏗️ App Architecture
 
 ```
-VeggieKart/
-├── components/           # Reusable UI components
-│   ├── AddressSelectionBottomSheet.kt
-│   ├── BannerView.kt
-│   ├── CategoriesView.kt
-│   ├── HeaderView.kt
-│   └── ProductItemView.kt
-├── pages/               # Feature pages
-│   ├── HomePage.kt
-│   ├── CategoryProductsPage.kt
-│   └── ProductDetailsPage.kt
-├── screens/             # Main screens
-│   ├── AuthScreen.kt
-│   ├── LoginScreen.kt
-│   ├── HomeScreen.kt
-│   ├── ProfileScreen.kt
-│   ├── AddAddressScreen.kt
-│   └── ManageAddressesScreen.kt
-├── model/              # Data models
-│   ├── UserModel.kt
+VeggieKartAdmin/
+├── model/
 │   ├── ProductModel.kt
 │   ├── CategoryModel.kt
-│   └── AddressModel.kt
-├── viewmodel/          # ViewModels (MVVM)
-│   └── AuthViewModel.kt
-└── ui/theme/           # Material Design theming
+│   └── AdminModel.kt
+├── viewmodel/
+│   ├── AuthViewModel.kt
+│   ├── ProductViewModel.kt
+│   ├── CategoryViewModel.kt
+│   └── BannerViewModel.kt
+├── screens/
+│   ├── auth/
+│   │   └── LoginScreen.kt
+│   ├── dashboard/
+│   │   └── DashboardScreen.kt
+│   ├── products/
+│   │   ├── ProductsScreen.kt
+│   │   └── AddEditProductScreen.kt
+│   ├── categories/
+│   │   ├── CategoriesScreen.kt
+│   │   └── AddEditCategoryScreen.kt
+│   └── banners/
+│       └── BannersScreen.kt
+├── navigation/
+│   ├── AppNavigation.kt
+│   └── Routes.kt
+├── utils/
+│   └── AppUtil.kt
+└── ui/theme/
 ```
 
 **Architecture Pattern**: MVVM (Model-View-ViewModel)
-- **Model**: Data classes and Firebase operations
-- **View**: Composable functions (UI layer)
-- **ViewModel**: Business logic and state management
+- **Model**: Data classes mirroring Firestore structure
+- **View**: Composable functions
+- **ViewModel**: Business logic, Firestore operations, StateFlow
 
 ---
 
 ## 🗄️ Database Structure
 
-### Firestore Collections
+This app shares the same Firebase project as VeggieKart user app.
 
 ```
 firestore/
-├── users/
-│   └── {uid}/
-│       ├── name: String
-│       ├── phone: String
-│       ├── createdAt: Timestamp
-│       ├── addresses: Array<AddressModel>
-│       └── cartItems: Map<productId, quantity>
-│
 └── data/
     ├── banners/
     │   └── urls: Array<String>
@@ -189,7 +145,7 @@ firestore/
                 ├── id: String
                 ├── title: String
                 ├── description: String
-                ├── category: String
+                ├── category: String (categoryId)
                 ├── price: String
                 ├── actualPrice: String
                 └── images: Array<String>
@@ -197,44 +153,40 @@ firestore/
 
 ---
 
-## 🚧 Roadmap & Planned Features
+## 🔒 Firestore Security Rules
 
-### 🛒 Cart & Checkout (In Progress)
-- Data structure already implemented in `UserModel`
-- Add to cart functionality
-- Cart quantity management
-- Checkout flow with order placement
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
 
-### 📦 Order Management
-- Order history
-- Order tracking
-- Re-order functionality
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
 
-### 🔍 Enhanced Search
-- Product search with filters
-- Category-based filtering
-- Price range filters
-
-### ❤️ Wishlist
-- Save favorite products
-- Quick access to saved items
+    match /data/{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+```
 
 ---
 
 ## 🛠️ Setup & Installation
 
 ### Prerequisites
-- Android Studio Hedgehog | 2023.1.1 or later
-- JDK 17 or higher
-- Android SDK 34 (Android 14)
-- Firebase project with Authentication and Firestore enabled
+- Android Studio Hedgehog or later
+- JDK 11 or higher
+- Firebase project (same as VeggieKart user app)
 
 ### Installation Steps
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/veggiekart.git
-   cd veggiekart
+   git clone https://github.com/piyushlasane/veggiekart-admin.git
+   cd veggiekart-admin
    ```
 
 2. **Open in Android Studio**
@@ -243,65 +195,49 @@ firestore/
    - Navigate to the cloned repository
 
 3. **Configure Firebase**
-   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-   - Add an Android app to your Firebase project
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Open your existing VeggieKart Firebase project
+   - Add a new Android app with package `com.project.veggiekartadmin`
    - Download `google-services.json`
-   - Place it in `app/` directory
-   - Enable Phone Authentication in Firebase Console
-   - Enable Firestore Database
+   - Place it in the `app/` directory
+   - Enable Email/Password Authentication
+   - Create an admin user in Firebase Auth → Users
 
-4. **Sync Gradle**
-   - Wait for Gradle sync to complete
-   - Resolve any dependency issues
-
-5. **Run the App**
-   - Connect an Android device or start an emulator
-   - Click "Run" or press `Shift + F10`
+4. **Sync Gradle and Run**
+   ```
+   Sync Project with Gradle Files → Run on device/emulator
+   ```
 
 ---
 
-## 📦 Dependencies
+## 🚧 Roadmap
 
-```kotlin
-dependencies {
-    // Jetpack Compose
-    implementation("androidx.compose.ui:ui:1.5.4")
-    implementation("androidx.compose.material3:material3:1.1.2")
-    implementation("androidx.navigation:navigation-compose:2.7.5")
-    
-    // Firebase
-    implementation("com.google.firebase:firebase-auth-ktx:22.3.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
-    
-    // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    
-    // Image Loading
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    
-    // Location Services
-    implementation("com.google.android.gms:play-services-location:21.0.1")
-}
-```
+### 📦 Orders Management (Planned)
+- View all customer orders
+- Update order status: Pending → Confirmed → Dispatched → Delivered
+- Order details with customer info
+
+### 📊 Dashboard Analytics (Planned)
+- Total products, categories count
+- Recent orders summary
+- Revenue overview
+
+### 🔔 Push Notifications (Planned)
+- Notify customers on order status change
+- Promotional notification broadcast
 
 ---
 
-## 🤝 Contributing
+## 🤝 Related Project
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+This admin app is built to manage the **VeggieKart** customer app.  
+👉 [VeggieKart User App](https://github.com/piyushlasane/veggiekart)
 
 ---
 
 ## 📄 License
 
-© 2025 Piyush Lasane. All rights reserved.
-
+© 2025 Piyush Lasane. All rights reserved.  
 This project is for educational and portfolio purposes only.
 
 ---
