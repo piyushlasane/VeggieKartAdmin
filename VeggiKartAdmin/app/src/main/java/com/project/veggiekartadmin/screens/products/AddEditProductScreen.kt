@@ -1,12 +1,15 @@
 package com.project.veggiekartadmin.screens.products
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.project.veggiekartadmin.utils.CloudinaryUploader
 import com.project.veggiekartadmin.viewmodel.CategoryViewModel
 import com.project.veggiekartadmin.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
@@ -32,12 +37,14 @@ fun AddEditProductScreen(
     productViewModel: ProductViewModel = viewModel(),
     categoryViewModel: CategoryViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
     var actualPrice by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("") }
-    var imageUrls by remember { mutableStateOf(listOf("")) }
+    var imageUrls by remember { mutableStateOf(listOf<String>()) }
+    var uploadingIndex by remember { mutableStateOf<Int?>(null) }
     var isSaving by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(productId != null) }
     var categoryExpanded by remember { mutableStateOf(false) }
@@ -46,7 +53,32 @@ fun AddEditProductScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Load categories and product if editing
+    // tracks which index the picker was opened for
+    var pickingIndex by remember { mutableStateOf<Int?>(null) }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        val index = pickingIndex
+        if (uri != null && index != null) {
+            uploadingIndex = index
+            scope.launch {
+                val result = CloudinaryUploader.uploadImage(context, uri)
+                result.fold(
+                    onSuccess = { url ->
+                        imageUrls = imageUrls.toMutableList().also { it[index] = url }
+                        uploadingIndex = null
+                    },
+                    onFailure = { e ->
+                        snackbarHostState.showSnackbar("Upload failed: ${e.localizedMessage}")
+                        uploadingIndex = null
+                    }
+                )
+            }
+        }
+        pickingIndex = null
+    }
+
     LaunchedEffect(Unit) {
         categoryViewModel.loadCategories()
         if (productId != null) {
@@ -61,6 +93,8 @@ fun AddEditProductScreen(
                 }
                 isLoading = false
             }
+        } else {
+            imageUrls = listOf("")
         }
     }
 
@@ -85,9 +119,7 @@ fun AddEditProductScreen(
 
         if (isLoading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -149,22 +181,19 @@ fun AddEditProductScreen(
                 }
 
                 item {
-                    // Category Dropdown
                     ExposedDropdownMenuBox(
                         expanded = categoryExpanded,
                         onExpandedChange = { categoryExpanded = it }
                     ) {
                         OutlinedTextField(
-                            value = selectedCategory,
+                            value = categories.find { it.id == selectedCategory }?.name ?: selectedCategory,
                             onValueChange = {},
                             readOnly = true,
                             label = { Text("Category *") },
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded)
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
+                            modifier = Modifier.fillMaxWidth().menuAnchor(),
                             enabled = !isSaving
                         )
                         ExposedDropdownMenu(
@@ -185,66 +214,70 @@ fun AddEditProductScreen(
                 }
 
                 item {
-                    Text(
-                        "Image URLs",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Text("Images", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                 }
 
                 itemsIndexed(imageUrls) { index, url ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        OutlinedTextField(
-                            value = url,
-                            onValueChange = {
-                                imageUrls = imageUrls.toMutableList().also { list ->
-                                    list[index] = it
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = {
+                                    pickingIndex = index
+                                    imagePickerLauncher.launch("image/*")
+                                },
+                                modifier = Modifier.weight(1f),
+                                enabled = !isSaving && uploadingIndex == null
+                            ) {
+                                if (uploadingIndex == index) {
+                                    CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Uploading...")
+                                } else {
+                                    Icon(Icons.Default.AddPhotoAlternate, contentDescription = null)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(if (url.isEmpty()) "Pick Image ${index + 1}" else "Change Image ${index + 1}")
                                 }
-                            },
-                            label = { Text("Image URL ${index + 1}") },
-                            modifier = Modifier.weight(1f),
-                            singleLine = true,
-                            enabled = !isSaving
-                        )
-                        if (imageUrls.size > 1) {
-                            IconButton(onClick = {
-                                imageUrls = imageUrls.toMutableList().also { it.removeAt(index) }
-                            }) {
-                                Icon(
-                                    Icons.Outlined.Delete,
-                                    contentDescription = "Remove",
-                                    tint = MaterialTheme.colorScheme.error
-                                )
+                            }
+                            if (imageUrls.size > 1) {
+                                IconButton(
+                                    onClick = {
+                                        imageUrls = imageUrls.toMutableList().also { it.removeAt(index) }
+                                    },
+                                    enabled = uploadingIndex == null
+                                ) {
+                                    Icon(Icons.Outlined.Delete, contentDescription = "Remove", tint = MaterialTheme.colorScheme.error)
+                                }
                             }
                         }
-                    }
 
-                    // Preview image if URL is not empty
-                    if (url.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        AsyncImage(
-                            model = url,
-                            contentDescription = "Preview",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                        )
+                        if (url.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(8.dp))
+                            AsyncImage(
+                                model = url,
+                                contentDescription = "Preview",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                            )
+                        }
                     }
                 }
 
                 item {
                     OutlinedButton(
                         onClick = { imageUrls = imageUrls + "" },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = uploadingIndex == null && !isSaving
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = null)
+                        Icon(Icons.Default.AddPhotoAlternate, contentDescription = null)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Add Image URL")
+                        Text("Add Another Image")
                     }
                 }
 
@@ -252,43 +285,36 @@ fun AddEditProductScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
                         onClick = {
-                            // Validation
                             when {
                                 title.trim().isEmpty() -> {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Please enter product title")
-                                    }
+                                    scope.launch { snackbarHostState.showSnackbar("Please enter product title") }
                                     return@Button
                                 }
                                 description.trim().isEmpty() -> {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Please enter description")
-                                    }
+                                    scope.launch { snackbarHostState.showSnackbar("Please enter description") }
                                     return@Button
                                 }
                                 price.trim().isEmpty() -> {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Please enter MRP")
-                                    }
+                                    scope.launch { snackbarHostState.showSnackbar("Please enter MRP") }
                                     return@Button
                                 }
                                 actualPrice.trim().isEmpty() -> {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Please enter sell price")
-                                    }
+                                    scope.launch { snackbarHostState.showSnackbar("Please enter sell price") }
                                     return@Button
                                 }
                                 selectedCategory.isEmpty() -> {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Please select a category")
-                                    }
+                                    scope.launch { snackbarHostState.showSnackbar("Please select a category") }
                                     return@Button
                                 }
                             }
 
-                            isSaving = true
                             val filteredImages = imageUrls.filter { it.trim().isNotEmpty() }
+                            if (filteredImages.isEmpty()) {
+                                scope.launch { snackbarHostState.showSnackbar("Please add at least one image") }
+                                return@Button
+                            }
 
+                            isSaving = true
                             productViewModel.saveProduct(
                                 productId = productId,
                                 title = title.trim(),
@@ -308,11 +334,9 @@ fun AddEditProductScreen(
                                 }
                             }
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
+                        modifier = Modifier.fillMaxWidth().height(50.dp),
                         shape = RoundedCornerShape(12.dp),
-                        enabled = !isSaving
+                        enabled = !isSaving && uploadingIndex == null
                     ) {
                         if (isSaving) {
                             CircularProgressIndicator(

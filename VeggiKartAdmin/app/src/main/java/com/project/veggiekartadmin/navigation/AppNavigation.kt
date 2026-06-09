@@ -35,8 +35,5 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             val actualId = if (categoryId == "null") null else categoryId
             AddEditCategoryScreen(navController = navController, categoryId = actualId)
         }
-        composable(Routes.BANNERS) {
-            BannersScreen(navController = navController)
-        }
     }
 }

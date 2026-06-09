@@ -1,21 +1,27 @@
 package com.project.veggiekartadmin.screens.categories
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.project.veggiekartadmin.utils.CloudinaryUploader
 import com.project.veggiekartadmin.viewmodel.CategoryViewModel
 import kotlinx.coroutines.launch
 
@@ -26,13 +32,36 @@ fun AddEditCategoryScreen(
     categoryId: String? = null,
     categoryViewModel: CategoryViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     var name by remember { mutableStateOf("") }
     var imageUrl by remember { mutableStateOf("") }
     var isSaving by remember { mutableStateOf(false) }
+    var isUploading by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(categoryId != null) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            isUploading = true
+            scope.launch {
+                val result = CloudinaryUploader.uploadImage(context, uri)
+                result.fold(
+                    onSuccess = { url ->
+                        imageUrl = url
+                        isUploading = false
+                    },
+                    onFailure = { e ->
+                        snackbarHostState.showSnackbar("Upload failed: ${e.localizedMessage}")
+                        isUploading = false
+                    }
+                )
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         if (categoryId != null) {
@@ -67,9 +96,7 @@ fun AddEditCategoryScreen(
 
         if (isLoading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
@@ -82,24 +109,31 @@ fun AddEditCategoryScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Category Name *") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    enabled = !isSaving
+                    enabled = !isSaving && !isUploading
                 )
 
-                OutlinedTextField(
-                    value = imageUrl,
-                    onValueChange = { imageUrl = it },
-                    label = { Text("Image URL *") },
+                // Image picker button
+                OutlinedButton(
+                    onClick = { imagePickerLauncher.launch("image/*") },
                     modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    enabled = !isSaving
-                )
+                    enabled = !isSaving && !isUploading
+                ) {
+                    if (isUploading) {
+                        CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Uploading...")
+                    } else {
+                        Icon(Icons.Default.AddPhotoAlternate, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(if (imageUrl.isEmpty()) "Pick Image" else "Change Image")
+                    }
+                }
 
                 // Image preview
                 if (imageUrl.isNotEmpty()) {
@@ -120,19 +154,14 @@ fun AddEditCategoryScreen(
                     onClick = {
                         when {
                             name.trim().isEmpty() -> {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar("Please enter category name")
-                                }
+                                scope.launch { snackbarHostState.showSnackbar("Please enter category name") }
                                 return@Button
                             }
                             imageUrl.trim().isEmpty() -> {
-                                scope.launch {
-                                    snackbarHostState.showSnackbar("Please enter image URL")
-                                }
+                                scope.launch { snackbarHostState.showSnackbar("Please pick an image") }
                                 return@Button
                             }
                         }
-
                         isSaving = true
                         categoryViewModel.saveCategory(
                             categoryId = categoryId,
@@ -149,11 +178,9 @@ fun AddEditCategoryScreen(
                             }
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
                     shape = RoundedCornerShape(12.dp),
-                    enabled = !isSaving
+                    enabled = !isSaving && !isUploading
                 ) {
                     if (isSaving) {
                         CircularProgressIndicator(
